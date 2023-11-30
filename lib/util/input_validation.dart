@@ -1,6 +1,8 @@
 class InputValidation {
   static bool isNameValid(String name) {
-    String pattern=r'[^!@#<>?":_`~;[\]\\|=+)(*&^%0-9-]' ;
+    // String pattern=r'[^!@#<>?":_`~;[\]\\|=+)(*&^%0-9-]' ;
+        String pattern=r'^[a-z A-Z,.\-]+$';
+
     RegExp regExp=RegExp(pattern);
     if (name.isEmpty) {
       return false;
@@ -25,6 +27,7 @@ class InputValidation {
 
   static bool isPhoneNoValid(String phoneNo) {
     String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+
     RegExp regExp = RegExp(pattern);
     if (phoneNo.isEmpty) {
       return false;

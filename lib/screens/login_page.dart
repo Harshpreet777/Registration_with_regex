@@ -25,11 +25,6 @@ class _LoginClassState extends State<LoginPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneNoController = TextEditingController();
   final TextEditingController confirmPassController = TextEditingController();
-  String nameMessage = 'Please Enter Your Name';
-  String emailMessage = 'Please Enter Your Email';
-  String phoneNoMessage = 'Please Enter Your PhoneNo';
-  String passwordMessage = 'Please Enter Your Password';
-  String confirmPassMessage = 'Please Enter Same Password';
 
   bool? isNameValid = true;
   bool? isEmailValid = true;
@@ -37,7 +32,9 @@ class _LoginClassState extends State<LoginPage> {
   bool? isPasswordValid = true;
   bool? isConfirmPassValid = true;
   bool? isChecked = false;
-
+  bool? isFillColor = false;
+  bool passVisible = false;
+  bool confirmPassVisible = false;
   @override
   void initState() {
     debugPrint('==Init State==');
@@ -87,7 +84,7 @@ class _LoginClassState extends State<LoginPage> {
         // width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.all(20),
 
-        color: Colors.blue,
+        // color: Colors.blue,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -116,11 +113,11 @@ class _LoginClassState extends State<LoginPage> {
             sizedBoxBuild(),
             nameTextFieldWidget(),
             isNameValid == false
-                ? Align(
+                ? const Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      nameMessage,
-                      style: const TextStyle(
+                      StringConstant.nameMessage,
+                      style: TextStyle(
                           color: Colors.amber,
                           fontSize: 14,
                           fontWeight: FontWeight.bold),
@@ -142,11 +139,11 @@ class _LoginClassState extends State<LoginPage> {
             emailTextFieldWidget(),
             const SizedBox(height: 10),
             isEmailValid == false
-                ? Align(
+                ? const Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      emailMessage,
-                      style: const TextStyle(
+                      StringConstant.emailMessage,
+                      style: TextStyle(
                           color: Colors.amber,
                           fontSize: 14,
                           fontWeight: FontWeight.bold),
@@ -167,11 +164,11 @@ class _LoginClassState extends State<LoginPage> {
             sizedBoxBuild(),
             phoneNoTextFieldWidget(),
             isPhoneNoValid == false
-                ? Align(
+                ? const Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      phoneNoMessage,
-                      style: const TextStyle(
+                      StringConstant.phoneNoMessage,
+                      style:  TextStyle(
                           color: Colors.amber,
                           fontSize: 14,
                           fontWeight: FontWeight.bold),
@@ -194,11 +191,11 @@ class _LoginClassState extends State<LoginPage> {
             passwordTextFieldWidget(),
             const SizedBox(height: 10),
             isPasswordValid == false
-                ? Align(
+                ? const Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      passwordMessage,
-                      style: const TextStyle(
+                      StringConstant.passwordMessage,
+                      style:  TextStyle(
                           color: Colors.amber,
                           fontSize: 14,
                           fontWeight: FontWeight.bold),
@@ -218,11 +215,11 @@ class _LoginClassState extends State<LoginPage> {
             sizedBoxBuild(),
             confirmPassTextFieldWidget(),
             isConfirmPassValid == false
-                ? Align(
+                ? const Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      confirmPassMessage,
-                      style: const TextStyle(
+                      StringConstant.confirmPassMessage,
+                      style: TextStyle(
                           color: Colors.amber,
                           fontSize: 14,
                           fontWeight: FontWeight.bold),
@@ -358,10 +355,16 @@ class _LoginClassState extends State<LoginPage> {
         child: Row(
           children: [
             Checkbox(
+              fillColor: isFillColor == true
+                  ? const MaterialStatePropertyAll(Colors.white)
+                  : const MaterialStatePropertyAll(Colors.blue),
+              checkColor: Colors.blue,
+              overlayColor: const MaterialStatePropertyAll(Colors.white),
               value: isChecked,
               onChanged: (bool? value) {
                 setState(() {
                   isChecked = value ?? false;
+                  isFillColor = value ?? false;
                 });
               },
               side: const BorderSide(color: Colors.white, width: 2),
@@ -379,13 +382,20 @@ class _LoginClassState extends State<LoginPage> {
 
   TextFieldWidget confirmPassTextFieldWidget() {
     return TextFieldWidget(
+      onhideShowButton: () {
+        setState(() {
+          confirmPassVisible = !confirmPassVisible;
+        });
+      },
+      suffixImages:
+          confirmPassVisible == true ? Icons.visibility : Icons.visibility_off,
       errorColor:
           isConfirmPassValid == true ? Colors.transparent : Colors.amber,
       focusedBorder:
           isConfirmPassValid == true ? Colors.transparent : Colors.amber,
       hinttext: StringConstant.hintConfirmPass,
       images: Icons.lock,
-      obscuretext: false,
+      obscuretext: !confirmPassVisible,
       controller: confirmPassController,
       onChange: (val) {
         if (!InputValidation.isConfirmPassValid(val)) {
@@ -405,6 +415,13 @@ class _LoginClassState extends State<LoginPage> {
 
   TextFieldWidget passwordTextFieldWidget() {
     return TextFieldWidget(
+      onhideShowButton: () {
+        setState(() {
+          passVisible = !passVisible;
+        });
+      },
+      suffixImages:
+          passVisible == true ? Icons.visibility : Icons.visibility_off,
       errorColor: isPasswordValid == true ? Colors.transparent : Colors.amber,
       focusedBorder:
           isPasswordValid == true ? Colors.transparent : Colors.amber,
@@ -422,7 +439,7 @@ class _LoginClassState extends State<LoginPage> {
           });
         }
       },
-      obscuretext: false,
+      obscuretext: !passVisible,
       hinttext: StringConstant.hintPass,
       images: (Icons.lock),
     );
@@ -524,6 +541,7 @@ class _LoginClassState extends State<LoginPage> {
             isPhoneNoValid = false;
           });
         }
+
         if (confirmPassController.text.toString().isEmpty) {
           setState(() {
             isConfirmPassValid = false;
